@@ -1,4 +1,3 @@
-
 cap_letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 operator_chars = ['~', '&', 'v', '>', '<']
 monadic_chars = ['~']
@@ -52,11 +51,16 @@ def polishtoinfix (wff):
             for i in wffmirror:
                 if i in cap_letters:
                     string = i
-                    while len(stack) > 0 and (stack[-1] in obj_names or stack[-1] in obj_variables):
+                    while len(stack) > 0 and (stack[-1][0] in obj_names or stack[-1][0] in obj_variables):
                         string = (string + stack.pop())
                     stack.append(string)
-                elif i in obj_names or i in obj_variables:
+                elif i == '*':
                     stack.append(i)
+                elif i in obj_names or i in obj_variables:
+                    string = i
+                    while len(stack) > 0 and (stack[-1] == '*'):
+                        string = (string + stack.pop())
+                    stack.append(string)
                 elif i == '~':
                     string = '~' + stack.pop()
                     stack.append(string)
@@ -75,46 +79,76 @@ def polishtoinfix (wff):
         except Exception:
             return 'Not a wff'
             
-                
-def infix_wff_check(wff):
-    polwff = infixtopolish(wff)
-    re_infix = polishtoinfix(polwff)
-    if re_infix == wff.replace('3','\u2203').replace('4','\u2200'):
+# checks if a polish notation sentence is well-formed.
+def wffcheck (sentence):    
+# wffcheck_pt_1 () takes a sentence as an input and returns 1 iff it meets certain criteria. if it returns 0, then the sentence is not well-formed.
+# If it returns 1 it might not be well-formed if an object or varaible or star is in the place of a Sentence Letter, so running it a second time after the stars an any objects
+# or variables except the onese following quantifiers can rule out that case.
+# basically does the same thing as Polish to infix if it can generate a single sentence w/ no leftovers,
+    def wffcheck_pt_1(wff):
+        stack = []
+        biconditional_fixer = wff.replace("<>", "<").replace('\u2203','3').replace('\u2200','4')
+        # make a list and of Polish wff and read it right to left
+        wffmirror = list(biconditional_fixer)
+        wffmirror.reverse()
+        while True:
+            try:
+                for i in wffmirror:
+                    if i in cap_letters:
+                        string = i
+                        while len(stack) > 0 and (stack[-1][0] in obj_names or stack[-1][0] in obj_variables):
+                            string = (string + stack.pop())
+                        stack.append(string)
+                    elif i == '*':
+                        stack.append(i)
+                    elif i in obj_names or i in obj_variables:
+                        string = i
+                        while len(stack) > 0 and (stack[-1] == '*'):
+                            string = (string + stack.pop())
+                        stack.append(string)
+                    elif i == '~':
+                        string = '~' + stack.pop()
+                        stack.append(string)
+                    elif i in dyadic_chars:
+                        string = '(' + stack.pop() + i + stack.pop() + ')'
+                        stack.append(string)
+                    elif i in quantifiers:
+                        string = '(' + i + stack.pop() + ')' + stack.pop()
+                        stack.append(string)
+                    else:                    
+                        return 0
+                if len(stack) == 1:
+                    return 1
+                else:
+                    return 0
+            except Exception:
+                return 0
+#removes stars and any non-first place objects/variables
+    def star_and_relata_remover(wff):
+        no_star = wff.replace('*','')
+        no_star_list = list(no_star)
+        relata_remover_stack = []
+        for x in no_star_list:
+            if x not in obj_names and x not in obj_variables:
+                relata_remover_stack.append(str(x))
+            else:
+                if len(relata_remover_stack) > 0 and relata_remover_stack[-1] in quantifiers:
+                    relata_remover_stack.append(x)
+        out = ''.join([str(element) for element in relata_remover_stack])
+        return out
+    if wffcheck_pt_1(sentence) == 1 and wffcheck_pt_1(star_and_relata_remover(sentence)) == 1:
         return 1
     else:
         return 0
-
-def wffcheck(wff):
-    stack = []
-    biconditional_fixer = wff.replace("<>", "<").replace('\u2203','3').replace('\u2200','4')
-    # make a list and of Polish wff and read it right to left
-    wffmirror = list(biconditional_fixer)
-    wffmirror.reverse()
-    while True:
-        try:
-            for i in wffmirror:
-                if i in cap_letters:
-                    string = i
-                    while len(stack) > 0 and (stack[-1] in obj_names or stack[-1] in obj_variables):
-                        string = (string + stack.pop())
-                    stack.append(string)
-                elif i in obj_names or i in obj_variables:
-                    stack.append(i)
-                elif i == '~':
-                    string = '~' + stack.pop()
-                    stack.append(string)
-                elif i in dyadic_chars:
-                    string = '(' + stack.pop() + i + stack.pop() + ')'
-                    stack.append(string)
-                elif i in quantifiers:
-                    string = '(' + i + stack.pop() + ')' + stack.pop()
-                    stack.append(string)
-                else:                    
-                    return 0
-            if len(stack) == 1:
-                return 1
-            else:
-                return 0
-        except Exception:
+    
+# takes an sentence as an input and returns 1 iff well-formed infix sentence 0 iff not well-formed                
+def infix_wff_check(wff):
+    polwff = infixtopolish(wff)
+    if wffcheck(polwff) == 1:
+        re_infix = polishtoinfix(polwff)
+        if re_infix == wff.replace('3','\u2203').replace('4','\u2200'):
+            return 1
+        else:
             return 0
-
+    else :
+        return 0
