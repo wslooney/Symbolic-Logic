@@ -7,4 +7,4 @@
 
 # operators are : ~, &, v, >, <>, (3x) [existential], (4x) [universal quantifier]. You can also input the unicode characters for the quantifiers. Note that you cannot use "v" as a variable or name because it's used for the disjunction.
 
-# Started to add the ability to use astericks after variables or objects to increase number of variable and object names, but haven't finished yet.
+# you may also use any number of astericks after a variable or object name to create new variable or object names, though practically speaking this only useful for variables.
