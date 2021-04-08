@@ -125,7 +125,8 @@ def wffcheck (sentence):
                 return 0
 #removes stars and any non-first place objects/variables
     def star_and_relata_remover(wff):
-        no_star = wff.replace('*','')
+        biconditional_fixer = wff.replace("<>", "<").replace('\u2203','3').replace('\u2200','4')
+        no_star = biconditional_fixer.replace('*','')
         no_star_list = list(no_star)
         relata_remover_stack = []
         for x in no_star_list:
