@@ -1,7 +1,7 @@
 GUIDE FOR
 predicate_logic.py 
 
-For Predicate Logic or Sentence Logic, it includes the following functions
+For use in Predicate Logic or Sentence Logic, it includes the following functions
 infixtopolish(wff) is a function that takes infix notation wff and outputs Polish notation (also replaces the (3x) and (4x) with the quantifiers' unicodes.)
 polishtoinfix (wff) is a function that takes a Polish notation wff and outputs infix notation (also replaces the (3x) and (4x) with the quantifiers' unicodes.)
 infix_wff_check(wff) check to see if an infix notation sentence is well-formed
@@ -14,10 +14,12 @@ names are a-u, variables are w-z. You can also use * to create new variables, so
 
 you may also use any number of astericks after a variable or object name to create new variable or object names, though practically speaking this only useful for variables.
 
+Does not currently accomodate identity (x=y) or functions (f(x)), but I hope to add these features in the future as well as an ability to export a code to write the proof in LaTeX.
+
 GUIDE FOR
 Fitch_Proofs.py
 
-if run it will open a menu that has options for checking the validity of a proof, line by line in either Polish or infix notation, or to load a text file with the whole proof set up.
+When the program is run it will open a menu that has options for checking the validity of a proof, line by line in either Polish or infix notation, or to load a text file with the whole proof set up.
 If you run one with the whole proof, it is valid if the entire proof is printed to the terminal. If it stops there is a mistake with the line not printed.
 
 For a descripton of the rules see: https://wslooney.expressions.syr.edu/logic-rules/
@@ -37,3 +39,9 @@ Here is an example of a proof done in infix:
 
 each line must posses a line number, the appropriate number of scope lines, the sentence, and the rule cited.
 if putting a proof in a text file, proof should start on line 1.
+
+the program initializes an empty list called proof then uses the function called "nextline()" to convert a given string to an object in a defined class Proofline,"
+and if the new line is a valid next step, the function outputs a Proofline object, if it's not a valid step, and message is printed to the terminal, and the output is 0.
+
+The main bit of the program is built using Polish notation, and for using it with infix, it merely translates the sentences into Polish for the functions,
+then translates them back into infix when printed to the terminal.
