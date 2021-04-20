@@ -22,6 +22,8 @@ Fitch_Proofs.py
 When the program is run it will open a menu that has options for checking the validity of a proof, line by line in either Polish or infix notation, or to load a text file with the whole proof set up.
 If you run one with the whole proof, it is valid if the entire proof is printed to the terminal. If it stops there is a mistake with the line not printed.
 
+if you run the file reader it will give you an option to generate the LaTeX code for that argument using the fitch.sty package. I'll add this feature to the proof contructor soon.
+
 For a descripton of the rules see: https://wslooney.expressions.syr.edu/logic-rules/
 but they are standard Fitch rules:
 Premise, Assume, R, &E, &I, vI, vE, >I, >E, ~I, ~E, <>I, <>E, 4I, 4E, 3I, and 3E.
