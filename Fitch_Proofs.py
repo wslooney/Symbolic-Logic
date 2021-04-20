@@ -807,7 +807,7 @@ def InfixProofBuilder():
     print ('Proof completed.')
 
 def Polishtextreader():
-    filename = input('Enter file with extension to txt file that contains proof.')
+    filename = input('Enter file with extension to txt file that contains proof.\n')
     file = open(filename, 'r')
     for line in file:
         if nextline(line) != 0:
@@ -817,7 +817,7 @@ def Polishtextreader():
         infix_printline(line)
 
 def Infixtextreader():
-    filename = input('Enter file to txt file that contains proof.')
+    filename = input('Enter file with extension that contains proof.\n')
     def transformer(string):
         inputlist = string.split()
         if len(inputlist) != 4:
