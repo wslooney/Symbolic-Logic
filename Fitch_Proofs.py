@@ -807,41 +807,54 @@ def InfixProofBuilder():
     print ('Proof completed.')
 
 def Polishtextreader():
-    filename = input('Enter file with extension to txt file that contains proof.\n')
-    file = open(filename, 'r')
-    for line in file:
-        if nextline(line) != 0:
-            proof.append(nextline(transformer(line)))
-    file.close
-    for line in proof:
-        infix_printline(line)
+    try:
+        filename = input('Enter file with extension to txt file that contains proof.\n')
+        file = open(filename, 'r')
+        for line in file:
+            if nextline(line) != 0:
+                proof.append(nextline(transformer(line)))
+        file.close
+        for line in proof:
+            infix_printline(line)
+        latexchoice = input('Enter "y" to generate LaTeX code for proof. Enter any other key to return to menu. \n')
+        if latexchoice == 'y' or latexchoice == 'Y':
+            LatexConstructor()
+            print('\n')
+    except FileNotFoundError:
+        print('File not found.\n')
 
 def Infixtextreader():
-    filename = input('Enter file with extension that contains proof.\n')
-    def transformer(string):
-        inputlist = string.split()
-        if len(inputlist) != 4:
-            print('Line must have a line number, scope lines "|" sentence, and rule all separated by spaces. Dont separate rule and lines cited by rule.')
-            return 0
-        if predicate_logic.infix_wff_check(inputlist[2]) == 1:
-            inputlist[2] = predicate_logic.infixtopolish_nosub(inputlist[2])
-            return ' '.join(inputlist)
-        elif predicate_logic.infix_wff_check('(' + inputlist[2] +')') == 1:
-            inputlist[2] = predicate_logic.infixtopolish_nosub('(' + inputlist[2] +')')
-            return ' '.join(inputlist)
-        else:
-            print('Check to make sure your sentence is well-formed.')
-            return 0
+    filename = input('Enter file to txt file that contains proof.\n')
+    try:
+        def transformer(string):
+            inputlist = string.split()
+            if len(inputlist) != 4:
+                print('Line must have a line number, scope lines "|" sentence, and rule all separated by spaces. Dont separate rule and lines cited by rule.')
+                return 0
+            if predicate_logic.infix_wff_check(inputlist[2]) == 1:
+                inputlist[2] = predicate_logic.infixtopolish_nosub(inputlist[2])
+                return ' '.join(inputlist)
+            elif predicate_logic.infix_wff_check('(' + inputlist[2] +')') == 1:
+                inputlist[2] = predicate_logic.infixtopolish_nosub('(' + inputlist[2] +')')
+                return ' '.join(inputlist)
+            else:
+                print('Check to make sure your sentence is well-formed.')
+                return 0
 
-    file = open(filename, 'r')
-    for line in file:
-        if transformer(line) != 0:
-            if nextline(transformer(line)) != 0:
-                proof.append(nextline(transformer(line)))
-    file.close
-    for line in proof:
-        infix_printline(line)
-
+        file = open(filename, 'r')
+        for line in file:
+            if transformer(line) != 0:
+                if nextline(transformer(line)) != 0:
+                    proof.append(nextline(transformer(line)))
+        file.close
+        for line in proof:
+            infix_printline(line)
+        latexchoice = input('Enter "y" to generate LaTeX code for proof. Enter any other key to return to menu. \n')
+        if latexchoice == 'y' or latexchoice == 'Y':
+            LatexConstructor()
+            print('\n')
+    except FileNotFoundError:
+        print('File not found.\n')
 
 def Menu():
     selection = '0'
@@ -868,5 +881,47 @@ def Menu():
         if selection == 'd' or selection == 'D':
             Infixtextreader()
 
+# function for generating LaTeX code for the proof that uses fitch.sty
+def LatexConstructor():
+    if proof == []:
+        return ('There is no proof.')
+    else:
+        for count, line in enumerate(proof):
+            building_lines = []
+            sentence = line.sentence()
+
+            # gets the scope lines right
+            if line.rule()[0] == 'Premise':
+                if len (proof) > (count + 1 ):
+                    if proof[count+1].rule()[0] == 'Premise':
+                        building_lines.append('\\fa')
+                    else:
+                        building_lines.append('\\fj')                
+                else:
+                    building_lines.append('\\fj')
+
+            elif line.rule()[0] == 'Assume':
+                for i in range(line.rank()[0] - 1):
+                    building_lines.append ('\\fa')
+                    building_lines.append('\\fh')
+            
+            else:
+                for i in range(line.rank()[0]):
+                    building_lines.append ('\\fa')
+
+            #adds the sentece
+            building_lines.append(sentence.replace('3',' \\exists ').replace('4',' \\forall ').replace('v',' \\vee ').replace('&',' \\wedge ').replace('>',' \\rightarrow ').replace('<>',' \\leftrightarrow ').replace('~',' \\lnot '))
+
+            #needed for fitch.sty
+            building_lines.append('&')
+
+            if line.rule()[1] != None:
+                building_lines.append(line.rule()[0].replace('3','$\\exists$').replace('4','$\\forall$').replace('v','$\\vee$').replace('&','$\\wedge$').replace('>','$\\rightarrow$').replace('<>','$\\leftrightarrow$').replace('~','$\\lnot$') + ' ' + ','.join(line.rule()[1]) + ' \\\\')
+                
+            else:
+                building_lines.append(line.rule()[0].replace('3','$\\exists$').replace('4','$\\forall$').replace('v','$\\vee$').replace('&','$\\wedge$').replace('>','$\\rightarrow$').replace('<>','$\\leftrightarrow$').replace('~','$\\lnot$') + ' \\\\')
+
+            print(' '.join(building_lines))
+            
 if __name__ == "__main__":
     Menu()
