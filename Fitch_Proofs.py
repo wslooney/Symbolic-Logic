@@ -866,7 +866,7 @@ def Menu():
         if selection == 'c' or selection == 'C':
             Polishtextreader()
         if selection == 'd' or selection == 'D':
-            InfixProofBuilder()
+            Infixtextreader()
 
 if __name__ == "__main__":
     Menu()
