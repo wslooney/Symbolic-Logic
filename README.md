@@ -9,7 +9,7 @@ wffcheck(wff) checks to see if a Polish notation sentence is well-formed
 polishtoinfix_nosub(wff) same as polishtoinfix() but does not replace the 3x and 4x with quantifiers.
 infixtopolish_nosub (infix) same as infixtopolish but does not replace the 3x and 4x with quantifiers.
 
-operators are : ~, &, v, >, <>, (3x) [existential], (4x) [universal quantifier]. You can also input the unicode characters for the quantifiers. Note that you cannot use "v" as a variable or name because it's used for the disjunction. In infix quantifiers must have parens around them, eg "(4x)" in Polish they do have parens around them eg "4x"
+operators are : ~, &, v, >, <>, (3x) [existential], (4x) [universal quantifier]. You can also input the unicode characters for the quantifiers. Note that you cannot use "v" as a variable or name because it's used for the disjunction. In infix quantifiers must have parens around them, eg "(4x)" in Polish they do not have parens around them eg "4x"
 names are a-u, variables are w-z. You can also use * to create new variables, so x** will be treated as a distinct variable from x or x*.
 
 you may also use any number of astericks after a variable or object name to create new variable or object names, though practically speaking this only useful for variables.
